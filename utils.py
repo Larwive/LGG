@@ -84,6 +84,9 @@ def get_model(args):
             dropout_rate=args.dropout,
             pool=args.pool, pool_step_rate=args.pool_step_rate,
             idx_graph=idx_local_graph)
+        if args.load_model:
+            model.load_state_dict(torch.load(args.load_path.format(args.label_type)))
+            print("Previous model loaded.")
 
     return model
 

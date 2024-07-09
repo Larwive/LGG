@@ -1,3 +1,9 @@
+This forked version aims at improving the training process experience, such as adding a subject to start training from, and support of mps backend for Apple Silicon chips.
+No major modification is expected at the moment.
+
+Note that `requirements.txt` is surely not up to date.
+
+Original readme:
 # LGGNet
 This is the PyTorch implementation of the LGGNet using [DEAP](http://www.eecs.qmul.ac.uk/mmv/datasets/deap/) dataset in our paper:
 

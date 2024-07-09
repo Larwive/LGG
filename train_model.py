@@ -3,7 +3,7 @@ from utils import *
 import torch.nn as nn
 
 CUDA = torch.cuda.is_available()
-
+MPS = torch.backends.mps.is_available()
 
 def train_one_epoch(data_loader, net, loss_fn, optimizer):
     net.train()
@@ -11,7 +11,9 @@ def train_one_epoch(data_loader, net, loss_fn, optimizer):
     pred_train = []
     act_train = []
     for i, (x_batch, y_batch) in enumerate(data_loader):
-        if CUDA:
+        if MPS:
+            x_batch, y_batch = x_batch.to('mps'), y_batch.to('mps')
+        elif CUDA:
             x_batch, y_batch = x_batch.cuda(), y_batch.cuda()
 
         out = net(x_batch)
@@ -33,7 +35,9 @@ def predict(data_loader, net, loss_fn):
     vl = Averager()
     with torch.no_grad():
         for i, (x_batch, y_batch) in enumerate(data_loader):
-            if CUDA:
+            if MPS:
+                x_batch, y_batch = x_batch.to('mps'), y_batch.to('mps')
+            elif CUDA:
                 x_batch, y_batch = x_batch.cuda(), y_batch.cuda()
 
             out = net(x_batch)
@@ -62,7 +66,9 @@ def train(args, data_train, label_train, data_val, label_val, subject, fold):
     val_loader = get_dataloader(data_val, label_val, args.batch_size)
 
     model = get_model(args)
-    if CUDA:
+    if MPS:
+        model = model.to('mps')
+    elif CUDA:
         model = model.cuda()
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
@@ -142,7 +148,9 @@ def test(args, data, label, reproduce, subject, fold):
     test_loader = get_dataloader(data, label, args.batch_size)
 
     model = get_model(args)
-    if CUDA:
+    if MPS:
+        model = model.to('mps')
+    elif CUDA:
         model = model.cuda()
     loss_fn = nn.CrossEntropyLoss()
 
@@ -168,7 +176,9 @@ def combine_train(args, data, label, subject, fold, target_acc):
     seed_all(args.random_seed)
     train_loader = get_dataloader(data, label, args.batch_size)
     model = get_model(args)
-    if CUDA:
+    if MPS:
+        model = model.to('mps')
+    elif CUDA:
         model = model.cuda()
     model.load_state_dict(torch.load(args.load_path))
 

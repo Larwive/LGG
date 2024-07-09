@@ -8,6 +8,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', type=str, default='DEAP')
     parser.add_argument('--data-path', type=str, default='/home/dingyi/data/deap/')
     parser.add_argument('--subjects', type=int, default=32)
+    parser.add_argument('--start-subject', type=int, default=0)
     parser.add_argument('--num-class', type=int, default=2, choices=[2, 3, 4])
     parser.add_argument('--label-type', type=str, default='L', choices=['A', 'V', 'D', 'L'])
     parser.add_argument('--segment', type=int, default=4)
@@ -30,10 +31,11 @@ if __name__ == '__main__':
     parser.add_argument('--LS-rate', type=float, default=0.1)
 
     parser.add_argument('--save-path', default='./save/')
-    parser.add_argument('--load-path', default='./save/max-acc.pth')
+    parser.add_argument('--load-path', default='./save/max-acc{}.pth')
     parser.add_argument('--load-path-final', default='./save/final_model.pth')
     parser.add_argument('--gpu', default='0')
     parser.add_argument('--save-model', type=bool, default=True)
+    parser.add_argument('--load-model', type=bool, default=False)
     ######## Model Parameters ########
     parser.add_argument('--model', type=str, default='LGGNet')
     parser.add_argument('--pool', type=int, default=16)
@@ -45,7 +47,7 @@ if __name__ == '__main__':
     ######## Reproduce the result using the saved model ######
     parser.add_argument('--reproduce', action='store_true')
     args = parser.parse_args()
-    sub_to_run = np.arange(args.subjects)
+    sub_to_run = np.arange(args.start_subject, args.start_subject+args.subjects)
     pd = PrepareData(args)
     pd.run(sub_to_run, split=True, expand=True)
     cv = CrossValidation(args)
