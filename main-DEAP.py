@@ -31,7 +31,7 @@ if __name__ == '__main__':
     parser.add_argument('--LS-rate', type=float, default=0.1)
 
     parser.add_argument('--save-path', default='./save/')
-    parser.add_argument('--load-path', default='./save/max-acc{}.pth')
+    parser.add_argument('--load-path', default='./save/max-acc.pth')
     parser.add_argument('--load-path-final', default='./save/final_model.pth')
     parser.add_argument('--gpu', default='0')
     parser.add_argument('--save-model', type=bool, default=True)

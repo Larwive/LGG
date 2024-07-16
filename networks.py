@@ -4,7 +4,7 @@ import math
 import torch.nn as nn
 import torch.nn.functional as F
 from layers import GraphConvolution
-DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+DEVICE = 'mps' if torch.backends.mps.is_available() else 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class PowerLayer(nn.Module):
