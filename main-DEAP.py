@@ -36,6 +36,9 @@ if __name__ == '__main__':
     parser.add_argument('--gpu', default='0')
     parser.add_argument('--save-model', type=bool, default=True)
     parser.add_argument('--load-model', type=bool, default=False)
+
+    parser.add_argument('--load-all', action='store_true')
+
     ######## Model Parameters ########
     parser.add_argument('--model', type=str, default='LGGNet')
     parser.add_argument('--pool', type=int, default=16)
@@ -49,7 +52,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     sub_to_run = np.arange(args.start_subject, args.start_subject+args.subjects)
     pd = PrepareData(args)
-    pd.run(sub_to_run, split=True, expand=True)
+    pd.run(sub_to_run, split=True, expand=True, load_all=args.load_all)
     cv = CrossValidation(args)
     seed_all(args.random_seed)
-    cv.n_fold_CV(subject=sub_to_run)
+    cv.n_fold_CV(subject=sub_to_run, load_all=args.load_all)

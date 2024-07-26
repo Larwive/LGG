@@ -36,7 +36,7 @@ class PrepareData:
                    'Fp2', 'AF4', 'F4', 'F8', 'FC6', 'FC2', 'C4', 'T8', 'CP6', 'CP2', 'P4', 'P8', 'PO4', 'O2']
         self.graph_type = args.graph_type
 
-    def run(self, subject_list, split=False, expand=True):
+    def run(self, subject_list, split=False, expand=True, load_all=False):
         """
         Parameters
         ----------
@@ -48,6 +48,8 @@ class PrepareData:
         -------
         The processed data will be saved './data_<data_format>_<dataset>_<label_type>/sub0.hdf'
         """
+        if load_all:
+            subject_list = np.arange(32)
         for sub in subject_list:
             data_, label_ = self.load_data_per_subject(sub)
             # select label type here

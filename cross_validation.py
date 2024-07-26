@@ -9,6 +9,7 @@ from train_model import *
 from utils import Averager, ensure_path
 from sklearn.model_selection import KFold
 import pickle
+from functools import reduce
 
 ROOT = os.getcwd()
 
@@ -56,6 +57,26 @@ class CrossValidation:
         label = np.array(dataset['label'])
         print('>>> Data:{} Label:{}'.format(data.shape, label.shape))
         return data, label
+
+    def load_all(self):
+        """
+        load data for all sub
+        :param sub: which subject's data to load
+        :return: data and label
+        """
+        save_path = os.getcwd()
+        data_type = 'data_{}_{}_{}'.format(self.args.data_format, self.args.dataset, self.args.label_type)
+        datas, labels = [], []
+        for sub in range(32):
+            sub_code = 'sub' + str(sub) + '.hdf'
+            path = osp.join(save_path, data_type, sub_code)
+            dataset = h5py.File(path, 'r')
+            datas.append(np.array(dataset['data']))
+            labels.append(np.array(dataset['label']))
+            #print('>>> Data:{} Label:{}'.format(datas[-1].shape, labels[-1].shape))
+        datas = reduce(lambda x, y: np.concatenate((x, y), axis=0), datas)
+        labels = reduce(lambda x, y: np.concatenate((x, y), axis=0), labels)
+        return datas, labels
 
     def prepare_data(self, idx_train, idx_test, data, label):
         """
@@ -159,7 +180,7 @@ class CrossValidation:
         return train, train_label, val, val_label
 
 
-    def n_fold_CV(self, subject=[0], fold=10, shuffle=True):
+    def n_fold_CV(self, subject=[0], fold=10, shuffle=True, load_all=False):
         """
         this function achieves n-fold cross-validation
         :param subject: how many subject to load
@@ -172,7 +193,10 @@ class CrossValidation:
         tvf = []  # total validation f1
 
         for sub in subject:
-            data, label = self.load_per_subject(sub)
+            if load_all:
+                data, label = self.load_all()
+            else:
+                data, label = self.load_per_subject(sub)
             va_val = Averager()
             vf_val = Averager()
             preds, acts = [], []
